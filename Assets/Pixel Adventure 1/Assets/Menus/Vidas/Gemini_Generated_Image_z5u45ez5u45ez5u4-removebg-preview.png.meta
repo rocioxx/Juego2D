@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 86c93cc58bcde7e40bc488d5a7959373
+guid: d58265c026d990a44bbeae707a808695
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3561630562538183170
-    second: imagenajustes_0
+      213: -6889097665492398961
+    second: Gemini_Generated_Image_z5u45ez5u45ez5u4-removebg-preview_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -84,32 +84,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: iOS
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -136,20 +110,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: tvOS
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -165,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: imagenajustes_0
+      name: Gemini_Generated_Image_z5u45ez5u45ez5u4-removebg-preview_0
       rect:
         serializedVersion: 2
-        x: 197
-        y: 48
-        width: 279
-        height: 274
+        x: 198
+        y: 196
+        width: 100
+        height: 108
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 20a534550247d6130800000000000000
-      internalID: 3561630562538183170
+      spriteID: f8c4a595c220560a0800000000000000
+      internalID: -6889097665492398961
       vertices: []
       indices: 
       edges: []
@@ -200,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      imagenajustes_0: 3561630562538183170
+      Gemini_Generated_Image_z5u45ez5u45ez5u4-removebg-preview_0: -6889097665492398961
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
