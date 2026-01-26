@@ -3436,7 +3436,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 2142703bb103f854eae3300b1daa2a81, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7009,7 +7009,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0066477656, y: -0.039875135}
+  m_Offset: {x: 0, y: -0.039875135}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -7019,7 +7019,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.19102293, y: 0.08024973}
+  m_Size: {x: 0.16, y: 0.08024973}
   m_EdgeRadius: 0
 --- !u!212 &1372408682
 SpriteRenderer:
@@ -7089,8 +7089,8 @@ Transform:
   m_GameObject: {fileID: 1372408680}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.86367, y: 0.2433, z: 0}
-  m_LocalScale: {x: 1, y: 1.1108, z: 1}
+  m_LocalPosition: {x: -0.86367, y: 0.23448181, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 152564243}
@@ -9424,7 +9424,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6367560908665664636, guid: cd947491a13509945aa1b644f9db3ef2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 0.32, y: 0.32}
@@ -9534,7 +9534,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   runSpeed: 2
-  jumpForce: 4
+  jumpForce: 3
+  betterJump: 0
+  fallMultiplier: 0.5
+  lowJumpMultiplier: 2
+  spriteRenderer: {fileID: 1572488452}
+  animator: {fileID: 1572488451}
 --- !u!1 &1598946916
 GameObject:
   m_ObjectHideFlags: 0
