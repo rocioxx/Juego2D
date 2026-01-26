@@ -4,10 +4,15 @@ using UnityEngine.InputSystem;
 public class PlayerMover : MonoBehaviour
 {
     public float runSpeed = 5f;
-    public float jumpForce = 7f; // Cambiado a un nombre más claro
+    public float jumpForce = 10f; // Fuerza del salto inicial
 
     private Rigidbody2D rb2D;
     private float horizontalInput;
+
+    [Header("Better Jump Settings")]
+    public bool betterJump = true;
+    public float fallMultiplier = 2.5f;      // Gravedad al caer
+    public float lowJumpMultiplier = 2f;    // Gravedad si sueltas rápido el espacio
 
     void Start()
     {
@@ -16,15 +21,14 @@ public class PlayerMover : MonoBehaviour
 
     void Update()
     {
-        // Movimiento Horizontal con el Nuevo Input System
         if (Keyboard.current != null)
         {
+            // Movimiento Horizontal
             float moveLeft = Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed ? -1f : 0f;
             float moveRight = Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed ? 1f : 0f;
             horizontalInput = moveLeft + moveRight;
 
-            // SALTO: Usamos Keyboard.current.spaceKey en lugar de Input.GetKey
-            // Nota: Asegúrate de que tu script 'CheckGround' sea estático o esté accesible
+            // Salto Inicial
             if (Keyboard.current.spaceKey.wasPressedThisFrame && CheckGround.isGrounded)
             {
                 Jump();
@@ -34,13 +38,34 @@ public class PlayerMover : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Aplicamos la velocidad lineal (desplazamiento), NO la angular (rotación)
+        // Aplicar movimiento horizontal
         rb2D.linearVelocity = new Vector2(horizontalInput * runSpeed, rb2D.linearVelocity.y);
+
+        // Lógica de Better Jump (Caída mejorada)
+        if (betterJump)
+        {
+            ApplyBetterJump();
+        }
     }
 
     void Jump()
     {
-        // Esta es la forma correcta de aplicar el salto en 2D
         rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, jumpForce);
+    }
+
+    void ApplyBetterJump()
+    {
+        // Si estamos cayendo (velocidad Y negativa)
+        if (rb2D.linearVelocity.y < 0)
+        {
+            // Cae más rápido: suma gravedad extra
+            rb2D.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+        }
+        // Si estamos subiendo pero NO estamos pulsando espacio (salto corto)
+        else if (rb2D.linearVelocity.y > 0 && !Keyboard.current.spaceKey.isPressed)
+        {
+            // Reduce la subida más rápido: suma gravedad extra
+            rb2D.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+        }
     }
 }

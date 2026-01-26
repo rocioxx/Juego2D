@@ -9535,6 +9535,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   runSpeed: 2
   jumpForce: 3
+  betterJump: 0
+  fallMultiplier: 0.5
+  lowJumpMultiplier: 2
 --- !u!1 &1598946916
 GameObject:
   m_ObjectHideFlags: 0
