@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +10,8 @@ public class FruitCollected : MonoBehaviour
        
         if (collision.CompareTag("Player"))
         {
-           
+            FindObjectOfType<FruitManager>().AddFruit();
+
             GetComponent<SpriteRenderer>().enabled = false;
 
            
