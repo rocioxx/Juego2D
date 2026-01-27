@@ -5,7 +5,7 @@ public class FruitManager : MonoBehaviour
 {
     public TextMeshProUGUI counterText; // Aquí arrastraremos el texto luego
     private int totalFruits;
-    private int collectedFruits = 0;
+    public int collectedFruits = 0;
 
     void Start()
     {
