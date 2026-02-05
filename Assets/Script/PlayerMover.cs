@@ -9,6 +9,11 @@ public class PlayerMover : MonoBehaviour
     private Rigidbody2D rb2D;
     private float horizontalInput;
 
+    [Header("Doble Salto")]
+    // Si quieres más saltos en el aire, aumenta este número
+    public int extraJumps = 1; 
+    private int jumpsRemaining;
+
     [Header("Better Jump Settings")]
     public bool betterJump = true;
     public float fallMultiplier = 2.5f;
@@ -19,6 +24,7 @@ public class PlayerMover : MonoBehaviour
     void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
+        jumpsRemaining = extraJumps; 
     }
 
     void Update()
@@ -30,7 +36,7 @@ public class PlayerMover : MonoBehaviour
             float moveRight = Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed ? 1f : 0f;
             horizontalInput = moveLeft + moveRight;
 
-            // --- GIRO Y ANIMACI�N DE CORRER ---
+            // Giro y Animación de Correr
             if (horizontalInput != 0)
             {
                 animator.SetBool("Run", true);
@@ -41,22 +47,32 @@ public class PlayerMover : MonoBehaviour
                 animator.SetBool("Run", false);
             }
 
-            // --- ANIMACI�N DE SALTO (NUEVO SEG�N TU IMAGEN) ---
-            if (CheckGround.isGrounded == false)
+            // --- LÓGICA DE SUELO Y RECARGA ---
+            if (CheckGround.isGrounded)
+            {
+                animator.SetBool("Jump", false);
+                jumpsRemaining = extraJumps; // Recargamos el salto extra al tocar suelo
+            }
+            else
             {
                 animator.SetBool("Jump", true);
                 animator.SetBool("Run", false);
             }
-            if (CheckGround.isGrounded == true)
-            {
-                animator.SetBool("Jump", false);
-            }
-            // --------------------------------------------------
 
-            // Salto Inicial
-            if (Keyboard.current.spaceKey.wasPressedThisFrame && CheckGround.isGrounded)
+            // --- LÓGICA DE SALTO MODIFICADA ---
+            if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
-                Jump();
+                if (CheckGround.isGrounded)
+                {
+                    // Salto normal desde el suelo
+                    PerformJump();
+                }
+                else if (jumpsRemaining > 0)
+                {
+                    // Salto extra en el aire
+                    PerformJump();
+                    jumpsRemaining--; // Solo restamos si es en el aire
+                }
             }
         }
     }
@@ -71,8 +87,10 @@ public class PlayerMover : MonoBehaviour
         }
     }
 
-    void Jump()
+    // He renombrado la función para que sea más clara
+    void PerformJump()
     {
+        // Reseteamos la velocidad en Y para que el segundo salto no pierda fuerza si estamos cayendo
         rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, jumpForce);
     }
 
