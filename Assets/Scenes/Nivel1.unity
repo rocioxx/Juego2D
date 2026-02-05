@@ -624,7 +624,7 @@ RectTransform:
   m_AnchorMin: {x: 0.40179372, y: 0.11038709}
   m_AnchorMax: {x: 0.6072758, y: 0.2876496}
   m_AnchoredPosition: {x: 3, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 11.917966, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &158786653
 MonoBehaviour:
@@ -7832,7 +7832,7 @@ RectTransform:
   m_AnchorMin: {x: 0.3961911, y: 0.64099324}
   m_AnchorMax: {x: 0.60167295, y: 0.8182556}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 11.917979, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &832768195
 MonoBehaviour:
@@ -8232,7 +8232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1113872865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8832,7 +8832,7 @@ RectTransform:
   m_AnchorMin: {x: 0.40160066, y: 0.379175}
   m_AnchorMax: {x: 0.60708255, y: 0.5564374}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 11.917942, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1289827108
 MonoBehaviour:
@@ -12069,6 +12069,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   runSpeed: 2
   jumpForce: 3
+  extraJumps: 1
   betterJump: 0
   fallMultiplier: 0.5
   lowJumpMultiplier: 2
