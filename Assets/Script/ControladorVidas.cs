@@ -1,75 +1,66 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections; // Necesario para la pausa
 
 public class ControladorVidas : MonoBehaviour
 {
-    [Header("Configuraci�n")]
+    [Header("Configuración")]
     public int saludMaxima = 3;
     public int saludActual;
 
     [Header("Referencias")]
-    public Image[] pergaminos;      // Tus vidas
-    public GameObject panelGameOver; // El panel de Game Over
-    public TextMeshProUGUI textoPuntuacionFinal; // El texto de puntos
+    public Image[] pergaminos;
+    public GameObject panelGameOver;
+    public TextMeshProUGUI textoPuntuacionFinal;
 
-    [Header("Respawn / Reaparici�n")]
-    public Transform puntoRespawn;  // <--- �NUEVO! Aqu� pondremos el "Spam"
+    [Header("Respawn")]
+    public Transform puntoRespawn;
 
     void Start()
     {
         saludActual = saludMaxima;
         ActualizarUI();
-        Time.timeScale = 1f;
     }
 
     public void RecibirDano()
     {
-        saludActual--; // Quitamos una vida
-        ActualizarUI(); // Actualizamos los dibujos
+        saludActual--;
+        ActualizarUI();
 
         if (saludActual > 0)
         {
-            // --- OPCI�N A: A�N EST�S VIVO ---
-            // Te devolvemos al "Spam" (Respawn)
-            if (puntoRespawn != null)
-            {
-                transform.position = puntoRespawn.position;
-
-                // IMPORTANTE: Frenamos a la rana para que no salga disparada al reaparecer
-                Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                if (rb != null) rb.linearVelocity = Vector2.zero;
-            }
+            // En lugar de moverlo directo, llamamos a la pausa
+            StartCoroutine(PausaAlReaparecer());
         }
         else
         {
-            // --- OPCI�N B: HAS MUERTO (0 vidas) ---
-            // Mostramos puntuaci�n y Game Over
-            FruitManager managerFrutas = Object.FindFirstObjectByType<FruitManager>();
-            if (managerFrutas != null && textoPuntuacionFinal != null)
-            {
-                textoPuntuacionFinal.text = "Frutas: " + managerFrutas.collectedFruits;
-            }
-
-            Time.timeScale = 0f; // Pausar juego
-            panelGameOver.SetActive(true); // Mostrar panel
+            Time.timeScale = 0f;
+            panelGameOver.SetActive(true);
         }
+    }
+
+    IEnumerator PausaAlReaparecer()
+    {
+        // 1. Lo movemos al spawn y lo frenamos
+        transform.position = puntoRespawn.position;
+        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
+        // 2. Desactivamos el movimiento
+        GetComponent<PlayerMover>().enabled = false;
+
+        // 3. Esperamos 1.5 segundos (ajusta el número si quieres)
+        yield return new WaitForSeconds(1.5f);
+
+        // 4. Activamos el movimiento otra vez
+        GetComponent<PlayerMover>().enabled = true;
     }
 
     void ActualizarUI()
     {
-        // Tu c�digo de siempre para los pergaminos
         for (int i = 0; i < pergaminos.Length; i++)
         {
-            // CORREGIDO: Usamos la l�gica simple para orden visual (0, 1, 2)
-            if (i < saludActual)
-            {
-                pergaminos[i].enabled = true;
-            }
-            else
-            {
-                pergaminos[i].enabled = false;
-            }
+            pergaminos[i].enabled = (i < saludActual);
         }
     }
 }

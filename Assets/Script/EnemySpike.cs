@@ -2,32 +2,18 @@ using UnityEngine;
 
 public class EnemySpike : MonoBehaviour
 {
-    // Si el enemigo es sÛlido (Rana choca contra Èl)
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.transform.CompareTag("Player"))
         {
-            Atacar(collision.gameObject);
-        }
-    }
+            // Buscamos el script de vidas en el jugador
+            ControladorVidas vidas = collision.gameObject.GetComponent<ControladorVidas>();
 
-    // Si el enemigo es fantasma/trigger (Rana lo atraviesa)
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Atacar(collision.gameObject);
-        }
-    }
-
-    void Atacar(GameObject jugador)
-    {
-        // Buscamos el script que YA TIENES BIEN PUESTO en la rana
-        ControladorVidas vida = jugador.GetComponent<ControladorVidas>();
-
-        if (vida != null)
-        {
-            vida.RecibirDano(); // °Golpe!
+            if (vidas != null)
+            {
+                // En lugar de DESTROY, llamamos a la funci√≥n de da√±o
+                vidas.RecibirDano(); 
+            }
         }
     }
 }
