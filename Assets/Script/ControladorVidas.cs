@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections; // Necesario para la pausa
+using System.Collections;
 
 public class ControladorVidas : MonoBehaviour
 {
@@ -9,13 +8,20 @@ public class ControladorVidas : MonoBehaviour
     public int saludMaxima = 3;
     public int saludActual;
 
-    [Header("Referencias")]
+    [Header("Referencias UI")]
+    // IMPORTANTE: Ordena las vidas en el Inspector así: 
+    // Element 0: Izquierda | Element 1: Centro | Element 2: Derecha
     public Image[] pergaminos;
-    public GameObject panelGameOver;
-    public TextMeshProUGUI textoPuntuacionFinal;
+
+    // Ya no necesitamos la referencia directa al panel aquí, 
+    // porque el GameManager se encargará de mostrarlo.
+    // public GameObject panelGameOver; 
 
     [Header("Respawn")]
     public Transform puntoRespawn;
+
+    // Escudo para no recibir dos golpes seguidos (Invencibilidad)
+    private bool esInvulnerable = false;
 
     void Start()
     {
@@ -25,42 +31,79 @@ public class ControladorVidas : MonoBehaviour
 
     public void RecibirDano()
     {
+        // 1. Si ya tenemos el escudo activo, ignoramos el golpe
+        if (esInvulnerable) return;
+
+        // 2. Restamos vida
         saludActual--;
         ActualizarUI();
 
         if (saludActual > 0)
         {
-            // En lugar de moverlo directo, llamamos a la pausa
-            StartCoroutine(PausaAlReaparecer());
+            // --- NO HAS MUERTO AÚN ---
+            // Te llevamos al respawn pero SIN pausar el juego
+            StartCoroutine(RespawnSinPausa());
         }
         else
         {
-            Time.timeScale = 0f;
-            panelGameOver.SetActive(true);
+            // --- HAS MUERTO (0 Vidas) ---
+            // Aquí está el cambio CLAVE: Llamamos al GameManager.
+            // Así él puede copiar los puntos de fruta antes de sacar el cartel.
+
+            GameManager gm = Object.FindFirstObjectByType<GameManager>();
+
+            if (gm != null)
+            {
+                gm.GameOver(); // ¡Jefe, encárgate tú!
+            }
+            else
+            {
+                // Por si acaso se te olvidó poner el GameManager en la escena
+                Debug.LogError("🚨 ¡No encuentro el script GameManager en la escena!");
+                Time.timeScale = 0f; // Al menos paramos el juego
+            }
         }
     }
 
-    IEnumerator PausaAlReaparecer()
+    IEnumerator RespawnSinPausa()
     {
-        // 1. Lo movemos al spawn y lo frenamos
-        transform.position = puntoRespawn.position;
-        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        esInvulnerable = true; // Activamos escudo protector
 
-        // 2. Desactivamos el movimiento
-        GetComponent<PlayerMover>().enabled = false;
+        // 1. Teletransporte inmediato al punto de respawn
+        if (puntoRespawn != null)
+        {
+            transform.position = puntoRespawn.position;
+        }
 
-        // 3. Esperamos 1.5 segundos (ajusta el número si quieres)
-        yield return new WaitForSeconds(1.5f);
+        // 2. Frenamos el empujón para que no salgas volando, pero NO te quitamos el control
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null) rb.linearVelocity = Vector2.zero;
 
-        // 4. Activamos el movimiento otra vez
-        GetComponent<PlayerMover>().enabled = true;
+        // 3. Efecto Visual (Parpadeo / Transparencia)
+        SpriteRenderer spr = GetComponent<SpriteRenderer>();
+        if (spr != null) spr.color = new Color(1f, 1f, 1f, 0.5f); // 50% transparente
+
+        // 4. Esperamos 2 segundos de inmunidad (puedes moverte mientras)
+        yield return new WaitForSeconds(2.0f);
+
+        // 5. Quitamos el escudo y volvemos a color normal
+        if (spr != null) spr.color = Color.white;
+        esInvulnerable = false;
     }
 
     void ActualizarUI()
     {
+        // Recorremos las imágenes de los pergaminos/corazones
         for (int i = 0; i < pergaminos.Length; i++)
         {
-            pergaminos[i].enabled = (i < saludActual);
+            if (pergaminos[i] != null)
+            {
+                // Si tienes 2 vidas:
+                // i=0 (Izq) < 2 --> TRUE (Encendido)
+                // i=1 (Cen) < 2 --> TRUE (Encendido)
+                // i=2 (Der) < 2 --> FALSE (Apagado)
+                pergaminos[i].enabled = (i < saludActual);
+            }
         }
     }
 }

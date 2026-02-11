@@ -6,6 +6,7 @@ public class MenuManager : MonoBehaviour
     // Esta función la llamará tu botón verde
     public void Jugar()
     {
+        PlayerPrefs.DeleteKey("TotalFrutasGuardadas");
         // Asegúrate de que "Nivel1" es el nombre EXACTO de tu escena de juego
         SceneManager.LoadScene("Nivel1");
     }

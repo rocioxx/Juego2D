@@ -21,6 +21,6 @@ public class MenuGameOver : MonoBehaviour
     public void IrAlMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MenuPrincipal"); // Asegúrate de poner el nombre real de tu menú
+        SceneManager.LoadScene("MainMenu"); // Asegúrate de poner el nombre real de tu menú
     }
 }

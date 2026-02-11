@@ -1,24 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FruitCollected : MonoBehaviour
 {
-    
+    // --- ESTA ES LA CLAVE ---
+    // Un interruptor para recordar si ya hemos chocado
+    private bool yaRecogida = false;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-       
-        if (collision.CompareTag("Player"))
+        // Si toca al Jugador... Y ADEMÁS el interruptor está apagado
+        if (collision.CompareTag("Player") && !yaRecogida)
         {
-            FindObjectOfType<FruitManager>().AddFruit();
+            // 1. ¡CERRAMOS EL INTERRUPTOR!
+            // Ahora, si viene el segundo collider de los pies, ya no podrá entrar aquí
+            yaRecogida = true;
 
-            GetComponent<SpriteRenderer>().enabled = false;
+            // 2. Avisamos al Manager (solo una vez)
+            FruitManager manager = Object.FindFirstObjectByType<FruitManager>();
 
-           
-            transform.GetChild(0).gameObject.SetActive(true);
+            if (manager != null)
+            {
+                manager.AddFruit();
+                Debug.Log("Fruta recogida: " + gameObject.name);
+            }
 
-           
-            Destroy(gameObject, 0.5f);
+            // 3. Destruimos la fruta
+            Destroy(gameObject);
+
+            // Si usas animación, usa esto en vez de Destroy directo:
+            // GetComponent<Animator>().SetTrigger("collected");
+            // Destroy(gameObject, 0.5f);
         }
     }
 }
