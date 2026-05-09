@@ -1,21 +1,24 @@
 {
   "project_info": {
-    "project_number": "875880689649",
-    "project_id": "juego-rana2d",
-    "storage_bucket": "juego-rana2d.firebasestorage.app"
+    "project_number": "548132711242",
+    "project_id": "mrran-d567f",
+    "storage_bucket": "mrran-d567f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:875880689649:android:b2d1391347272896921e50",
-        "android_client_info": {
-          "package_name": "com.RocioLaura.MrRana"
-        }
+        "mobilesdk_app_id": "1:548132711242:web:cbefef16b402085d1eefb3",
+        "web_client_info": {}
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "548132711242-2tsnj7p0v6cl27vj86v79rknu0m18h5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCl4GuFJ_r67PmJlKbUgKGZHLrez2zCsQk"
+          "current_key": "AIzaSyCPtL0NN6cv4QcBi1ouhniFoHart_qG5TQ"
         }
       ],
       "services": {

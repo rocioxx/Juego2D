@@ -26,7 +26,7 @@ public class PlayerMover : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         jumpsRemaining = extraJumps; 
     }
-
+     
     void Update()
     {
         if (Keyboard.current != null)

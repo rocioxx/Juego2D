@@ -201,6 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1874cfdab69c8db4ca390a9e5da68fad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControladorFirebase
+  webClientId: 548132711242-2tsnj7somntaq5c8hv19d5r41b7jaig4.apps.googleusercontent.com
 --- !u!4 &189692328
 Transform:
   m_ObjectHideFlags: 0
@@ -230,7 +231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InterfazUsuario
   fbManager: {fileID: 189692327}
   emailInput: {fileID: 1978139138}
-  passInput: {fileID: 627708426}
+  passwordInput: {fileID: 627708426}
   canvasDeLogin: {fileID: 1613983236}
 --- !u!1 &228231710
 GameObject:
@@ -2271,7 +2272,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 189692329}
         m_TargetAssemblyTypeName: InterfazUsuario, Assembly-CSharp
-        m_MethodName: EjecutarBoton
+        m_MethodName: EjecutarBotonGoogle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

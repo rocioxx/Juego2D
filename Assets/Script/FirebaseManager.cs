@@ -4,84 +4,139 @@ using Firebase.Auth;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using System.Collections.Generic;
+using Google;
+using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System.Diagnostics;
 
 public class FirebaseManager : MonoBehaviour
 {
     FirebaseAuth auth;
     FirebaseFirestore db;
     FirebaseUser usuarioActual;
+    string redirectUri = "http://localhost:51772/";
 
-    // REFERENCIA A LA INTERFAZ
+    [Header("Configuración Google")]
+    public string webClientId = "548132711242-2tsnj7somntaq5c8hv19d5r41b7jaig4.apps.googleusercontent.com";
+
     private InterfazUsuario interfaz;
 
     void Start()
     {
-        // Buscamos el componente de interfaz en el mismo objeto
         interfaz = GetComponent<InterfazUsuario>();
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(tarea => {
             auth = FirebaseAuth.DefaultInstance;
             db = FirebaseFirestore.DefaultInstance;
-            Debug.Log("Firebase preparado");
+            UnityEngine.Debug.Log("Firebase preparado");
         });
     }
 
-    public void LoginORegistro(string email, string password)
+    public void LoginConGoogle()
     {
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(tarea => {
-            if (tarea.IsCompleted && !tarea.IsFaulted) {
-                usuarioActual = tarea.Result.User;
-                Debug.Log("Nuevo usuario registrado: " + usuarioActual.Email);
-                
-                // ES NUEVO: Creamos datos iniciales y cerramos menú
-                GuardarDatosJugador(1, 0, "avatar_01");
-                interfaz.DesactivarMenu();
-            } else {
-                // YA EXISTE: Intentamos loguear y recuperar sus datos
-                LoguearYRecuperar(email, password);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        UnityEngine.Debug.Log("Iniciando Login en Windows...");
+        _ = LoginWindows(); // Ejecutamos la tarea asíncrona
+#elif UNITY_ANDROID
+            UnityEngine.Debug.Log("Iniciando Google Sign-In en Android...");
+            IniciarLoginAndroid();
+#endif
+    }
+
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+    private async Task LoginWindows()
+    {
+        // 1. Configuración del "Oído" (Servidor Local)
+        string redirectUri = "http://localhost:51772/";
+        HttpListener listener = new HttpListener();
+        listener.Prefixes.Add(redirectUri);
+        listener.Start();
+
+        // 2. Construcción de la URL y apertura del navegador
+        string authEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+        string scope = "email%20profile";
+        string authRequest = $"{authEndpoint}?response_type=code&scope={scope}&redirect_uri={redirectUri}&client_id={webClientId}";
+
+        Application.OpenURL(authRequest);
+        UnityEngine.Debug.Log("Esperando respuesta en el navegador...");
+
+        // 3. Espera asíncrona del código de Google
+        HttpListenerContext contexto = await listener.GetContextAsync();
+        string codigo = contexto.Request.QueryString.Get("code");
+
+        // 4. Respuesta amigable al usuario en el navegador
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes("<html><body>¡Autenticación completada! Puedes volver a Mr. Rana.</body></html>");
+        contexto.Response.ContentLength64 = buffer.Length;
+        contexto.Response.OutputStream.Write(buffer, 0, buffer.Length);
+        contexto.Response.Close();
+        listener.Stop();
+
+        if (!string.IsNullOrEmpty(codigo))
+        {
+            UnityEngine.Debug.Log("Código recibido: " + codigo);
+            // El siguiente paso lógico será intercambiar este 'codigo' por un Token
+            // ¿Quieres que veamos cómo hacer ese intercambio con una petición web?
+        }
+    }
+#endif
+
+    private void IniciarLoginAndroid()
+    {
+#if UNITY_ANDROID
+        GoogleSignInConfiguration configuration = new GoogleSignInConfiguration {
+            WebClientId = webClientId,
+            RequestIdToken = true
+        };
+        GoogleSignIn.Configuration = configuration;
+
+        GoogleSignIn.DefaultInstance.SignIn().ContinueWithOnMainThread<GoogleSignInUser>(tarea => {
+            if (tarea.IsFaulted) {
+                UnityEngine.Debug.LogError("Error en Google Sign-In Android: " + tarea.Exception);
+            } else if (tarea.IsCompleted) {
+                EntrarEnFirebaseConGoogle(tarea.Result.IdToken);
             }
         });
+#endif
     }
 
-    void LoguearYRecuperar(string email, string password)
+    void EntrarEnFirebaseConGoogle(string idToken)
     {
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(tarea => {
-            if (tarea.IsCompleted && !tarea.IsFaulted) {
-                usuarioActual = tarea.Result.User;
-                Debug.Log("Bienvenido de nuevo: " + usuarioActual.Email);
-                
-                // CARGAMOS sus datos en lugar de borrarlos
+        Credential credencial = GoogleAuthProvider.GetCredential(idToken, null);
+        auth.SignInWithCredentialAsync(credencial).ContinueWithOnMainThread(tarea => {
+            if (tarea.IsFaulted || tarea.IsCanceled)
+            {
+                UnityEngine.Debug.LogError("Error al conectar con Firebase: " + tarea.Exception);
+                return;
+            }
+
+            if (tarea.IsCompleted)
+            {
+                usuarioActual = auth.CurrentUser;
+                UnityEngine.Debug.Log("✅ Login Exitoso: " + usuarioActual.Email);
                 CargarDatosJugador();
-                
-                // OCULTAR MENÚ AL ENTRAR
-                interfaz.DesactivarMenu();
-            } else {
-                Debug.LogError("Error al loguear (posible contraseña mal): " + tarea.Exception);
+                if (interfaz != null) interfaz.DesactivarMenu();
             }
         });
     }
 
+    // --- FUNCIONES DE FIRESTORE ---
     public void CargarDatosJugador()
     {
         if (usuarioActual == null) return;
-
-        // Vamos a la nube a buscar el documento del usuario
         db.Collection("Usuarios").Document(usuarioActual.UserId).GetSnapshotAsync().ContinueWithOnMainThread(tarea => {
-            if (tarea.IsCompleted && !tarea.IsFaulted) {
+            if (tarea.IsCompleted && !tarea.IsFaulted)
+            {
                 DocumentSnapshot snapshot = tarea.Result;
-                
-                if (snapshot.Exists) {
-                    // Extraemos los datos guardados
+                if (snapshot.Exists)
+                {
                     int nivel = System.Convert.ToInt32(snapshot.GetValue<int>("Nivel"));
-                    int monedas = System.Convert.ToInt32(snapshot.GetValue<int>("Monedas"));
-                    string avatar = snapshot.GetValue<string>("AvatarID");
-
-                    Debug.Log("DATOS CARGADOS: Nivel " + nivel + ", Monedas " + monedas);
-                    
-                    // Aquí es donde dirías a tu juego: Jugador.nivel = nivel;
+                    UnityEngine.Debug.Log("Nivel recuperado: " + nivel);
                 }
-            } else {
-                Debug.LogWarning("El usuario no tiene datos previos guardados.");
+                else
+                {
+                    GuardarDatosJugador(1, 0, "avatar_01");
+                }
             }
         });
     }
@@ -89,16 +144,9 @@ public class FirebaseManager : MonoBehaviour
     public void GuardarDatosJugador(int nivel, int monedas, string idAvatar)
     {
         if (usuarioActual == null) return;
-
-        Dictionary<string, object> datos = new Dictionary<string, object>
-        {
-            { "Nivel", nivel },
-            { "Monedas", monedas },
-            { "AvatarID", idAvatar }
+        Dictionary<string, object> datos = new Dictionary<string, object> {
+            { "Nivel", nivel }, { "Monedas", monedas }, { "AvatarID", idAvatar }
         };
-
-        db.Collection("Usuarios").Document(usuarioActual.UserId).SetAsync(datos).ContinueWithOnMainThread(tarea => {
-            if (tarea.IsCompleted) Debug.Log("Datos guardados en la nube");
-        });
+        db.Collection("Usuarios").Document(usuarioActual.UserId).SetAsync(datos);
     }
 }

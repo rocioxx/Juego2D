@@ -1,22 +1,25 @@
 using UnityEngine;
 using TMPro;
 
-public class InterfazUsuario : MonoBehaviour 
+public class InterfazUsuario : MonoBehaviour
 {
     public FirebaseManager fbManager;
-    public TMP_InputField emailInput;
-    public TMP_InputField passInput;
+    public TMPro.TMP_InputField emailInput;
+    public TMPro.TMP_InputField passwordInput;
 
-    // ARRASTRA TU CANVAS AQUÍ EN EL INSPECTOR
-    public GameObject canvasDeLogin; 
+    // Ya no necesitas los inputs si solo usas Google, pero puedes dejarlos
+    public GameObject canvasDeLogin;
 
-    public void EjecutarBoton() {
-        fbManager.LoginORegistro(emailInput.text, passInput.text);
+    public void EjecutarBotonGoogle()
+    {
+        // Llamamos a la nueva función de Google
+        fbManager.LoginConGoogle();
     }
 
-    // Función que apaga el menú
-    public void DesactivarMenu() {
-        if (canvasDeLogin != null) {
+    public void DesactivarMenu()
+    {
+        if (canvasDeLogin != null)
+        {
             canvasDeLogin.SetActive(false);
         }
     }
