@@ -9,9 +9,13 @@ public class PlayerMover : MonoBehaviour
     private Rigidbody2D rb2D;
     private float horizontalInput;
 
+    // --- VARIABLES NUEVAS PARA LOS BOTONES MÓVILES ---
+    private float inputBotones = 0f;
+    private bool botonSaltoPulsado = false;
+
     [Header("Doble Salto")]
     // Si quieres más saltos en el aire, aumenta este número
-    public int extraJumps = 1; 
+    public int extraJumps = 1;
     private int jumpsRemaining;
 
     [Header("Better Jump Settings")]
@@ -22,58 +26,54 @@ public class PlayerMover : MonoBehaviour
     public Animator animator;
 
     void Start()
+
     {
+        Time.timeScale = 1f;
         rb2D = GetComponent<Rigidbody2D>();
-        jumpsRemaining = extraJumps; 
+        jumpsRemaining = extraJumps;
     }
-     
+
     void Update()
     {
+        float moveLeft = 0f;
+        float moveRight = 0f;
+
+        // 1. LÓGICA DE TECLADO (Con protección para móviles)
         if (Keyboard.current != null)
         {
-            // Movimiento Horizontal
-            float moveLeft = Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed ? -1f : 0f;
-            float moveRight = Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed ? 1f : 0f;
-            horizontalInput = moveLeft + moveRight;
+            moveLeft = Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed ? -1f : 0f;
+            moveRight = Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed ? 1f : 0f;
 
-            // Giro y Animación de Correr
-            if (horizontalInput != 0)
-            {
-                animator.SetBool("Run", true);
-                spriteRenderer.flipX = (horizontalInput < 0);
-            }
-            else
-            {
-                animator.SetBool("Run", false);
-            }
-
-            // --- LÓGICA DE SUELO Y RECARGA ---
-            if (CheckGround.isGrounded)
-            {
-                animator.SetBool("Jump", false);
-                jumpsRemaining = extraJumps; // Recargamos el salto extra al tocar suelo
-            }
-            else
-            {
-                animator.SetBool("Jump", true);
-                animator.SetBool("Run", false);
-            }
-
-            // --- LÓGICA DE SALTO MODIFICADA ---
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
-                if (CheckGround.isGrounded)
-                {
-                    // Salto normal desde el suelo
-                    PerformJump();
-                }
-                else if (jumpsRemaining > 0)
-                {
-                    // Salto extra en el aire
-                    PerformJump();
-                    jumpsRemaining--; // Solo restamos si es en el aire
-                }
+                IntentarSalto();
             }
+        }
+
+        // 2. SUMAMOS EL TECLADO Y LOS BOTONES
+        horizontalInput = Mathf.Clamp((moveLeft + moveRight) + inputBotones, -1f, 1f);
+
+        // 3. GIRO Y ANIMACIÓN DE CORRER (Sacado fuera para que funcione en móvil)
+        if (horizontalInput != 0)
+        {
+            animator.SetBool("Run", true);
+            spriteRenderer.flipX = (horizontalInput < 0);
+        }
+        else
+        {
+            animator.SetBool("Run", false);
+        }
+
+        // 4. LÓGICA DE SUELO Y RECARGA
+        if (CheckGround.isGrounded)
+        {
+            animator.SetBool("Jump", false);
+            jumpsRemaining = extraJumps; // Recargamos el salto extra al tocar suelo
+        }
+        else
+        {
+            animator.SetBool("Jump", true);
+            animator.SetBool("Run", false);
         }
     }
 
@@ -87,7 +87,6 @@ public class PlayerMover : MonoBehaviour
         }
     }
 
-    // He renombrado la función para que sea más clara
     void PerformJump()
     {
         // Reseteamos la velocidad en Y para que el segundo salto no pierda fuerza si estamos cayendo
@@ -100,9 +99,43 @@ public class PlayerMover : MonoBehaviour
         {
             rb2D.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
         }
-        else if (rb2D.linearVelocity.y > 0 && !Keyboard.current.spaceKey.isPressed)
+        else if (rb2D.linearVelocity.y > 0)
         {
-            rb2D.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+            // Protegemos el "Better Jump" para que detecte tanto el teclado como el botón táctil
+            bool espacioPulsado = Keyboard.current != null && Keyboard.current.spaceKey.isPressed;
+            if (!espacioPulsado && !botonSaltoPulsado)
+            {
+                rb2D.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+            }
         }
     }
+
+    // --- FUNCIÓN UNIFICADA DE SALTO ---
+    void IntentarSalto()
+    {
+        if (CheckGround.isGrounded)
+        {
+            PerformJump();
+        }
+        else if (jumpsRemaining > 0)
+        {
+            PerformJump();
+            jumpsRemaining--;
+        }
+    }
+
+    // ====================================================================
+    // --- FUNCIONES PÚBLICAS PARA ENLAZAR EN EL EVENT TRIGGER (CANVAS) ---
+    // ====================================================================
+
+    public void PulsarIzquierda() { inputBotones = -1f; }
+    public void PulsarDerecha() { inputBotones = 1f; }
+    public void SoltarMovimiento() { inputBotones = 0f; }
+
+    public void PulsarSalto()
+    {
+        botonSaltoPulsado = true;
+        IntentarSalto();
+    }
+    public void SoltarSalto() { botonSaltoPulsado = false; }
 }

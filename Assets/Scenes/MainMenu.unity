@@ -2270,9 +2270,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 189692329}
-        m_TargetAssemblyTypeName: InterfazUsuario, Assembly-CSharp
-        m_MethodName: EjecutarBotonGoogle
+      - m_Target: {fileID: 189692327}
+        m_TargetAssemblyTypeName: FirebaseManager, Assembly-CSharp
+        m_MethodName: LoginConGoogle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
