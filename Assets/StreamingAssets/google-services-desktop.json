@@ -7,18 +7,15 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:548132711242:web:cbefef16b402085d1eefb3",
-        "web_client_info": {}
-      },
-      "oauth_client": [
-        {
-          "client_id": "548132711242-2tsnj7p0v6cl27vj86v79rknu0m18h5e.apps.googleusercontent.com",
-          "client_type": 3
+        "mobilesdk_app_id": "1:548132711242:android:b3b0185bd97dfd261eefb3",
+        "android_client_info": {
+          "package_name": "com.RocioLaura.MrRana"
         }
-      ],
+      },
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCPtL0NN6cv4QcBi1ouhniFoHart_qG5TQ"
+          "current_key": "AIzaSyB45QKbizqlT34PhsWVMgXYocCs8s-fEaU"
         }
       ],
       "services": {
