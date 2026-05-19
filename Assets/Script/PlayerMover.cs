@@ -138,4 +138,21 @@ public class PlayerMover : MonoBehaviour
         IntentarSalto();
     }
     public void SoltarSalto() { botonSaltoPulsado = false; }
+
+   private void OnCollisionEnter2D(Collision2D collision)
+{
+    if (collision.gameObject.CompareTag("Caja"))
+    {
+        // ESTO ES EL CHIVATO: Escribirá un mensaje en la consola de Unity
+        Debug.Log("¡SÍ! El jugador ha tocado la caja correctamente");
+
+        JumpBox caja = collision.gameObject.GetComponent<JumpBox>();
+        if (caja != null)
+        {
+            caja.RecibirGolpe();
+        }
+    }
 }
+}
+
+

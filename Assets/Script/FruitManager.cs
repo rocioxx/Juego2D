@@ -9,21 +9,24 @@ public class FruitManager : MonoBehaviour
 
     void Start()
     {
-        // Buscamos todas las frutas
-        FruitCollected[] todasLasFrutas = Object.FindObjectsByType<FruitCollected>(FindObjectsSortMode.None);
+        // === CAMBIO CLAVE AQUÍ ===
+        // Usamos FindObjectsInactive.Include para obligar a Unity a contar 
+        // también las frutas que están desactivadas dentro de las cajas.
+        FruitCollected[] todasLasFrutas = Object.FindObjectsByType<FruitCollected>(
+            FindObjectsInactive.Include, 
+            FindObjectsSortMode.None
+        );
 
         totalFruits = todasLasFrutas.Length;
         UpdateUI();
 
         // --- CÓDIGO DE DETECTIVE ---
-        Debug.Log("🔍 HE ENCONTRADO " + totalFruits + " OBJETOS CON SCRIPT DE FRUTA:");
+        Debug.Log("🔍 HE ENCONTRADO " + totalFruits + " OBJETOS CON SCRIPT DE FRUTA (INCLUYENDO ESCONDIDAS):");
 
         foreach (FruitCollected fruta in todasLasFrutas)
         {
-            // Esto escribirá el nombre del objeto en la consola
             Debug.Log(" -> " + fruta.gameObject.name);
 
-            // PISTA EXTRA: Nos dice si es hijo de alguien (para encontrarlo mejor)
             if (fruta.transform.parent != null)
             {
                 Debug.Log("      (Está dentro de: " + fruta.transform.parent.name + ")");
@@ -31,23 +34,18 @@ public class FruitManager : MonoBehaviour
         }
         Debug.Log("-----------------------------------");
     }
+
     public void AddFruit()
     {
-        // 1. Sumamos al contador local (el de la pantalla de juego)
+        // 1. Sumamos al contador local
         collectedFruits++;
         UpdateUI();
 
-        // 2. --- NUEVO: GUARDAR EN LA MEMORIA GLOBAL ---
-        // Recuperamos cuántas llevábamos guardadas de antes
+        // 2. GUARDAR EN LA MEMORIA GLOBAL
         int totalGlobal = PlayerPrefs.GetInt("TotalFrutasGuardadas", 0);
-
-        // Le sumamos la nueva
         totalGlobal = totalGlobal + 1;
-
-        // Guardamos el nuevo total en la memoria
         PlayerPrefs.SetInt("TotalFrutasGuardadas", totalGlobal);
         PlayerPrefs.Save();
-        // ----------------------------------------------
 
         // 3. Comprobar si acabamos el nivel
         if (collectedFruits >= totalFruits)
@@ -63,6 +61,4 @@ public class FruitManager : MonoBehaviour
             counterText.text = "Frutas: " + collectedFruits + " / " + totalFruits;
         }
     }
-
-
 }
