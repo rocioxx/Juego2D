@@ -79562,6 +79562,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Caja_Madera
       objectReference: {fileID: 0}
+    - target: {fileID: 6828169187810053445, guid: 2ae0d695b0b46864f9f5bf63393f7ed4, type: 3}
+      propertyPath: m_Size.x
+      value: 0.15576711
+      objectReference: {fileID: 0}
+    - target: {fileID: 6828169187810053445, guid: 2ae0d695b0b46864f9f5bf63393f7ed4, type: 3}
+      propertyPath: m_Size.y
+      value: 0.015552372
+      objectReference: {fileID: 0}
+    - target: {fileID: 6828169187810053445, guid: 2ae0d695b0b46864f9f5bf63393f7ed4, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.0006994717
+      objectReference: {fileID: 0}
+    - target: {fileID: 6828169187810053445, guid: 2ae0d695b0b46864f9f5bf63393f7ed4, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.09118454
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
