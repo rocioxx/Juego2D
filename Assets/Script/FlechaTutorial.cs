@@ -25,13 +25,14 @@ public class FlechaTutorial : MonoBehaviour
         }
         else
         {
-            Debug.LogError("🚨 ERROR: ¡No has arrastrado el Bocadillo al script en el Inspector!");
+            // Cambiado a LogWarning para evitar que Unity congele la interfaz y los botones
+            Debug.LogWarning("⚠️ AVISO: ¡No has arrastrado el Bocadillo al script en el Inspector de " + gameObject.name + "!");
         }
 
         // 2. Comprobación de seguridad del Collider
         if (colliderFlecha == null)
         {
-            Debug.LogError("🚨 ERROR: El objeto " + gameObject.name + " no tiene un BoxCollider2D.");
+            Debug.LogWarning("⚠️ AVISO: El objeto " + gameObject.name + " no tiene un BoxCollider2D.");
         }
         else if (!colliderFlecha.isTrigger)
         {

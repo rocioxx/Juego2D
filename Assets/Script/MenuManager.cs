@@ -1,13 +1,35 @@
-using UnityEngine;
-using UnityEngine.SceneManagement; // Necesario para cambiar de escena
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+using Firebase.Auth;
 
 public class MenuManager : MonoBehaviour
 {
-    // Esta funci�n la llamar� tu bot�n verde
     public void Jugar()
     {
+        // 1. SI ESTÁS EN EL EDITOR DE UNITY (PC), TE DEJAMOS PASAR PARA PROBAR
+#if UNITY_EDITOR
+        Debug.Log("🎮 Modo Editor detectado: Saltando bloqueo de Firebase para pruebas de desarrollo.");
+        CargarNivel1();
+        return;
+#endif
+
+        // 2. LOGICA REAL PARA EL JUEGO EN ANDROID / DISPOSITIVOS
+        if (FirebaseAuth.DefaultInstance != null && FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            Debug.Log("✅ Usuario detectado en Firebase. Cargando el juego...");
+            CargarNivel1();
+        }
+        else
+        {
+            Debug.LogWarning("⛔ ¡Bloqueado! Debes iniciar sesión con Google antes de poder jugar.");
+        }
+    }
+
+    // He creado esta función cortita para no repetir código
+    private void CargarNivel1()
+    {
         PlayerPrefs.DeleteKey("TotalFrutasGuardadas");
-        // Aseg�rate de que "Nivel1" es el nombre EXACTO de tu escena de juego
+        Time.timeScale = 1f; // Aseguramos que el tiempo corre normal
         SceneManager.LoadScene("Nivel1");
     }
 
